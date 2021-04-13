@@ -1,0 +1,12 @@
+---
+- name: Check zabbix-server configuration and stop
+  shell: "which nginx | wc -l"
+  register: nginx_status
+
+- shell: "which mysql | wc -l"
+  register: mysql_status
+
+- name: STOP ZABBIX PROCESSES
+  service:
+    name: zabbix-server
+    state: stopped

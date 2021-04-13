@@ -1,0 +1,15 @@
+---
+- name: CHECKING CONFIGURATIN AND STOP ZABBIX PROCESSES
+  include_tasks: check_config.yml
+
+- name: BACK UP CONFIGURATION FILES, PHP FILES AND ZABBIX BINARIES
+  include_tasks: backup_config_files.yml
+
+- name:  BACK UP THE EXISTING ZABBIX DATABASE
+  include_tasks: backup_db.yml
+
+- name:  UPDATE REPOSITORY CONFIGURATION PACKAGE
+  include_tasks: update_repo.yml
+
+- name: UPGRADE ZABBIX COMPONENTS
+  include_tasks: update_components.yml

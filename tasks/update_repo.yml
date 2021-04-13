@@ -1,0 +1,23 @@
+---
+- name: removed old repository
+  file:
+    path: /etc/apt/sources.list.d/zabbix.list
+    state: absent
+
+- set_fact:
+    zabbix_server_apt_repository:
+      - "http://repo.zabbix.com/zabbix/{{ zabbix_version }}/{{ ansible_distribution.lower() }}/"
+      - "{{ ansible_distribution_release }}"
+      - "main"
+
+- name: "Installing repository {{ ansible_distribution }}"
+  apt_repository:
+    repo: "{{ item }} {{ zabbix_server_apt_repository | join(' ') }}"
+    state: present
+  with_items:
+    - deb-src
+    - deb
+
+- name: run update
+  apt:
+    update_cache: yes

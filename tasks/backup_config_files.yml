@@ -1,0 +1,15 @@
+---
+- name: create backup dir
+  file:
+    path: "{{ zabbix_backup_folder }}"
+    state: directory
+    mode: "1777"
+
+- name: Copy etc folder
+  copy: src=/etc dest={{ zabbix_backup_folder }} remote_src=true directory_mode=true
+
+- name: Copy PHP files
+  copy: src=/usr/share/zabbix/ dest=/opt/zabbix-backup/zabbix_php remote_src=true directory_mode=true
+
+- name: Copy  Zabbix binaries dir
+  shell: "cp -R /usr/share/doc/zabbix-* /opt/zabbix-backup/"
