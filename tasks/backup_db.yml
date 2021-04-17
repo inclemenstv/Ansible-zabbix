@@ -2,14 +2,14 @@
 - block:
   - name: backup mysql db
     script:
-      cmd: /etc/ansible/roles/zabbix_update/zabbix-dump  -o {{ zabbix_backup_folder }}
+      cmd: zabbix-dump  -o {{ zabbix_backup_folder }}
 
   when: mysql_status.stdout == "1"
 
 - block: ### if using postgresql_db
-    - name: backup postgresql db
-      script:
-        cmd: /etc/ansible/roles/zabbix_update/zabbix-dump -t psql -o {{ zabbix_backup_folder }}
+  - name: backup postgresql db
+    script:
+      cmd: zabbix-dump -t psql -o {{ zabbix_backup_folder }}
 
   when: mysql_status.stdout == "0"
 
