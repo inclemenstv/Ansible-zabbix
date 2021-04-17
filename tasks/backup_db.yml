@@ -1,35 +1,15 @@
 ---
 - block:
-  - name: install python-pymysql for connect to mysql
-    apt:
-      name:
-      - python3-apt
-      - python3-pymysql
-      state: present
-
-  - name: mysql dump zabbix db
-    mysql_db:
-      login_unix_socket: /var/run/mysqld/mysqld.sock
-      state: dump
-      name: zabbix
-      target: /opt/zabbix-backup/zabbix.sql.gz
-      ignore_tables: [ zabbix.history, zabbix.history_log, zabbix.history_str, zabbix.history_text, zabbix.history_uint, zabbix.trends ]
+  - name: backup mysql db
+    script:
+      cmd: /etc/ansible/roles/zabbix_update/zabbix-dump  -o {{ zabbix_backup_folder }}
 
   when: mysql_status.stdout == "1"
 
 - block: ### if using postgresql_db
-  - name: install python3-psycopg2 for connect to postgresql
-    apt:
-      name:
-      - python3-apt
-      - python3-psycopg2
-      state: present
-
-  - name: postgresql dump zabbix db
-    postgresql_db:
-      name: zabbix
-      state: dump
-      target: /opt/zabbix-backup/zabbix.sql.gz
-    become_user: postgres
+    - name: backup postgresql db
+      script:
+        cmd: /etc/ansible/roles/zabbix_update/zabbix-dump -t psql -o {{ zabbix_backup_folder }}
 
   when: mysql_status.stdout == "0"
+

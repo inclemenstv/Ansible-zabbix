@@ -12,3 +12,4 @@
         
         roles:
         - zabbix_update
+
