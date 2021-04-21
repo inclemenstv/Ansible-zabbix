@@ -1,4 +1,20 @@
 ---
+- name: Gather the package facts
+  ansible.builtin.package_facts:
+    manager: auto
+
+- set_fact:
+    current_zabbix_version: "{{ ansible_facts.packages['zabbix-agent'][0].version | regex_search(':(...)', '\\1') | first }}"
+  when: "'zabbix-agent' in ansible_facts.packages"
+
+- debug:
+    msg: "Zabbix-server has already been updated, current version = {{ current_zabbix_version }}"
+  when: current_zabbix_version == zabbix_version | string
+
+- name: End the play for hosts that current zabbix-version == {{ zabbix_version }}
+  meta: end_host
+  when: current_zabbix_version == zabbix_version | string
+
 - name: Check zabbix-server configuration and stop
   shell: "which nginx | wc -l"
   register: nginx_status
@@ -10,3 +26,4 @@
   service:
     name: zabbix-server
     state: stopped
+
